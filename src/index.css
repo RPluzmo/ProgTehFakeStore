@@ -3,3 +3,12 @@
   margin: 0;
   padding: 0;
 }
+
+body {
+  background: rgb(238, 13, 88);
+}
+
+a {
+  text-decoration: none;
+  color: white;
+}

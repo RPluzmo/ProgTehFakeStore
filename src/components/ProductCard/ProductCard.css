@@ -1,0 +1,25 @@
+.product-card {
+  background-color: #1f338a;
+  border-radius: 20px;
+  padding: 20px;
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  border: 3px solid #ffffff;
+  color: white;
+}
+
+.image-container {
+  background-color: white;
+  border-radius: 10px;
+  height: 200px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.image-container img {
+  max-height: 100%;
+  max-width: 100%;
+}
+
+
