@@ -7,13 +7,12 @@ import ProductPage from './pages/ProductPage';
 
 function App() {
   const [products, setProducts] = useState([]);
-  const [categories, setCategories] = useState([]); // Jauns state kategorijām
+  const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Iegūstam produktus un kategorijas paralēli
         const [prodRes, catRes] = await Promise.all([
           fetch('https://fakestoreapi.com/products'),
           fetch('https://fakestoreapi.com/products/categories')

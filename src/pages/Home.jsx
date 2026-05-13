@@ -1,13 +1,12 @@
 import { useState } from 'react';
 import ProductCard from '../components/ProductCard/ProductCard';
 import SearchBar from '../components/SearchBar/SearchBar';
-import CategorySelector from '../components/Category/Category';
+import Category from '../components/Category/Category';
 
 export default function Home({ products, categories, loading }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
 
-  // Filtrēšanas loģika: gan pēc meklēšanas, gan pēc kategorijas
   const filteredProducts = products.filter((product) => {
     const matchesSearch = product.title.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesCategory = selectedCategory === 'all' || product.category === selectedCategory;
@@ -18,7 +17,7 @@ export default function Home({ products, categories, loading }) {
     <main>
       <div className="filters-container">
         <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
-        <CategorySelector 
+        <Category 
           categories={categories} 
           selectedCategory={selectedCategory} 
           setSelectedCategory={setSelectedCategory} 
