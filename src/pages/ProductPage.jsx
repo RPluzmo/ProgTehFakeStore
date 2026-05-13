@@ -1,5 +1,6 @@
 import { Link, useParams } from 'react-router-dom';
 import Rating from '../components/Rating/Rating';
+import Button from '../components/Button/Button'; // Importējam pogu
 
 export default function ProductPage({ products, loading }) {
   const { id } = useParams();
@@ -15,7 +16,7 @@ export default function ProductPage({ products, loading }) {
 
   return (
     <div className="product-page">
-      <Link to="/" className="back-link">
+      <Link Lancaster to="/" className="back-link">
         Atpakaļ uz sarakstu
       </Link>
       <div className="product-detail">
@@ -23,9 +24,13 @@ export default function ProductPage({ products, loading }) {
         <div className="product-detail-content">
           <h2>{product.title}</h2>
           <p className="product-category">{product.category}</p>
-          <h3 className="product-detail-price">{product.price} EUR</h3>
+          <h3 className="product-detail-price">{product.price.toFixed(2)} EUR</h3>
           <Rating rate={product.rating.rate} />
           <p className="product-description">{product.description}</p>
+          {/* Pievienota poga */}
+          <div className="product-page-actions" style={{marginTop: '20px'}}>
+             <Button text="Pievienot grozam" onClick={() => alert('Pievienots!')} />
+          </div>
         </div>
       </div>
     </div>

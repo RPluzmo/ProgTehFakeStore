@@ -9,8 +9,8 @@ export default function Header() {
           <img src="/favicon.svg" alt="FakeStore" width="40" />
         </div>
         <div className="logo-text">
-          <h1>FakeStore</h1>
-          <p>Iepirkšanās Tev</p>
+          <h1>RealStore</h1>
+          <p>Click here to download more ram. 100% real 9/10 dentists recommend 🙂</p>
         </div>
       </Link>
     </header>

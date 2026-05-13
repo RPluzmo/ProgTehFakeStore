@@ -16,7 +16,7 @@ export default function ProductCard({ product }) {
           <Rating rate={product.rating.rate} />
         </div>
       </Link>
-      <Button text="Pievienot grozam" />
+      <Button text="Pievienot grozam" onClick={() => alert('Pievienots!')} />
     </article>
   );
 }

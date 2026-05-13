@@ -7,14 +7,23 @@ import ProductPage from './pages/ProductPage';
 
 function App() {
   const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]); // Jauns state kategorijām
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const getProducts = async () => {
+    const fetchData = async () => {
       try {
-        const response = await fetch('https://fakestoreapi.com/products');
-        const data = await response.json();
-        setProducts(data);
+        // Iegūstam produktus un kategorijas paralēli
+        const [prodRes, catRes] = await Promise.all([
+          fetch('https://fakestoreapi.com/products'),
+          fetch('https://fakestoreapi.com/products/categories')
+        ]);
+        
+        const prodData = await prodRes.json();
+        const catData = await catRes.json();
+        
+        setProducts(prodData);
+        setCategories(catData);
       } catch (error) {
         console.error('Kļūda iegūstot datus:', error);
       } finally {
@@ -22,14 +31,17 @@ function App() {
       }
     };
 
-    getProducts();
+    fetchData();
   }, []);
 
   return (
     <BrowserRouter>
       <Header />
       <Routes>
-        <Route path="/" element={<Home products={products} loading={loading} />} />
+        <Route 
+          path="/" 
+          element={<Home products={products} categories={categories} loading={loading} />} 
+        />
         <Route
           path="/product/:id"
           element={<ProductPage products={products} loading={loading} />}

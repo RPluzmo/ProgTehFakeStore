@@ -1,24 +1,41 @@
 import { useState } from 'react';
 import ProductCard from '../components/ProductCard/ProductCard';
 import SearchBar from '../components/SearchBar/SearchBar';
+import CategorySelector from '../components/Category/Category';
 
-export default function Home({ products, loading }) {
+export default function Home({ products, categories, loading }) {
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('all');
 
-  const filteredProducts = products.filter((product) =>
-    product.title.toLowerCase().includes(searchQuery.toLowerCase()),
-  );
+  // Filtrēšanas loģika: gan pēc meklēšanas, gan pēc kategorijas
+  const filteredProducts = products.filter((product) => {
+    const matchesSearch = product.title.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesCategory = selectedCategory === 'all' || product.category === selectedCategory;
+    return matchesSearch && matchesCategory;
+  });
 
   return (
     <main>
-      <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+      <div className="filters-container">
+        <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+        <CategorySelector 
+          categories={categories} 
+          selectedCategory={selectedCategory} 
+          setSelectedCategory={setSelectedCategory} 
+        />
+      </div>
+
       {loading ? (
         <h2 className="loading-text">Lādējas...</h2>
       ) : (
         <div className="product-grid">
-          {filteredProducts.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
+          {filteredProducts.length > 0 ? (
+            filteredProducts.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))
+          ) : (
+            <p className="no-results">Nekas netika atrasts.</p>
+          )}
         </div>
       )}
     </main>
