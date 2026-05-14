@@ -4,6 +4,7 @@ import './App.css';
 import Header from './components/Header/Header';
 import Home from './pages/Home';
 import ProductPage from './pages/ProductPage';
+import AdminPanel from './pages/AdminPanel';
 
 function App() {
   const [products, setProducts] = useState([]);
@@ -42,6 +43,10 @@ function App() {
         <Route
           path="/product/:id"
           element={<ProductPage products={products} loading={loading} />}
+        />
+        <Route 
+          path="/admin" 
+          element={<AdminPanel products={products} setProducts={setProducts} />} 
         />
       </Routes>
     </BrowserRouter>
