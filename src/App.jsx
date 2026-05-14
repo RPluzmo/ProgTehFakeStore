@@ -13,16 +13,14 @@ function App() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [prodRes, catRes] = await Promise.all([
-          fetch('https://fakestoreapi.com/products'),
-          fetch('https://fakestoreapi.com/products/categories')
-        ]);
+        const response = await fetch('http://127.0.0.1:8000/api/products');
+        const data = await response.json();
         
-        const prodData = await prodRes.json();
-        const catData = await catRes.json();
+        setProducts(data);
+
+        const uniqueCategories = ['Visas preces', ...new Set(data.map(p => p.category))];
+        setCategories(uniqueCategories);
         
-        setProducts(prodData);
-        setCategories(catData);
       } catch (error) {
         console.error('Kļūda iegūstot datus:', error);
       } finally {

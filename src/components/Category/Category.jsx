@@ -9,7 +9,6 @@ export default function CategorySelector({ categories, selectedCategory, setSele
         onChange={(e) => setSelectedCategory(e.target.value)}
         className="category-dropdown"
       >
-        <option value="all">Visas preces</option>
         {categories.map((cat) => (
           <option key={cat} value={cat}>
             {cat.charAt(0).toUpperCase() + cat.slice(1)}
