@@ -1,104 +1,165 @@
 import { useState } from 'react';
+import './AdminPanel.css';
 
 export default function AdminPanel({ products, setProducts }) {
+  const [file, setFile] = useState(null);
+  const [isNewCategory, setIsNewCategory] = useState(false);
+  
   const [newProduct, setNewProduct] = useState({
     title: '',
     price: '',
     description: '',
     category: '',
-    image: '',
-    rating: { rate: 0, count: 0 }
   });
+
+  const uniqueCategories = [...new Set(products.map(p => p.category))].filter(Boolean);
 
   const handleCreate = async (e) => {
     e.preventDefault();
+    
+    const formData = new FormData();
+    formData.append('title', newProduct.title);
+    formData.append('price', newProduct.price);
+    formData.append('description', newProduct.description);
+    formData.append('category', newProduct.category);
+    if (file) formData.append('image', file);
+    formData.append('rating', JSON.stringify({ rate: 0, count: 0 }));
+
     try {
       const response = await fetch('http://127.0.0.1:8000/api/products', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newProduct),
+        body: formData,
       });
+      
       const data = await response.json();
-      setProducts([...products, data.product]);
-      alert('Produkts veiksmīgi pievienots! 🎉');
-      e.target.reset(); // Notīra formu
+      
+      if (response.ok) {
+        setProducts([...products, data.product]);
+        alert('Produkts  pievienots');
+        
+        setNewProduct({ title: '', price: '', description: '', category: '' });
+        setFile(null);
+        setIsNewCategory(false);
+        e.target.reset();
+      } else {
+        console.error('bruh kļūda:', data);
+        alert('Neizdevās saglabāt');
+      }
     } catch (error) {
-      console.error('Kļūda izveidojot:', error);
+      console.error('Kļūda izveidojot bruh', error);
     }
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm('Vai tiešām vēlaties dzēst šo produktu?')) return;
+    if (!window.confirm('tiešām?')) return;
     try {
       await fetch(`http://127.0.0.1:8000/api/products/${id}`, { method: 'DELETE' });
       setProducts(products.filter(p => p.id !== id));
     } catch (error) {
-      console.error('Kļūda dzēšot:', error);
+      console.error('Kļūda bruh dzēšot:', error);
     }
   };
 
   return (
-    <div style={styles.container}>
-      <header style={styles.header}>
-        <h1>Admin Panelis</h1>
-        <p>Pārvaldiet veikala krājumus un pievienojiet jaunas preces</p>
-      </header>
+    <div className="admin-container">
 
-      <div style={styles.contentGrid}>
-        {/* FORMA */}
-        <section style={styles.card}>
-          <h3 style={styles.cardTitle}>Pievienot jaunu preci</h3>
-          <form onSubmit={handleCreate} style={styles.form}>
-            <div style={styles.inputGroup}>
+      <div className="admin-content-grid">
+        <section className="admin-card">
+          <h3 className="admin-card-title">Pievienot jaunu preci</h3>
+          <form onSubmit={handleCreate} className="admin-form">
+            <div className="admin-input-group">
               <label>Nosaukums</label>
-              <input type="text" style={styles.input} onChange={e => setNewProduct({...newProduct, title: e.target.value})} required />
+              <input type="text" value={newProduct.title} className="admin-input" onChange={e => setNewProduct({...newProduct, title: e.target.value})} required />
             </div>
             
-            <div style={styles.inputGroup}>
+            <div className="admin-input-group">
               <label>Cena (EUR)</label>
-              <input type="number" step="0.01" style={styles.input} onChange={e => setNewProduct({...newProduct, price: e.target.value})} required />
+              <input type="number" value={newProduct.price} step="0.01" className="admin-input" onChange={e => setNewProduct({...newProduct, price: e.target.value})} required />
             </div>
 
-            <div style={styles.inputGroup}>
+            <div className="admin-input-group">
               <label>Kategorija</label>
-              <input type="text" style={styles.input} onChange={e => setNewProduct({...newProduct, category: e.target.value})} required />
+              {!isNewCategory ? (
+                <select 
+                  className="admin-input"
+                  value={newProduct.category}
+                  onChange={(e) => {
+                    if (e.target.value === 'NEW_CATEGORY') {
+                      setIsNewCategory(true);
+                      setNewProduct({ ...newProduct, category: '' });
+                    } else {
+                      setNewProduct({ ...newProduct, category: e.target.value });
+                    }
+                  }}
+                  required
+                >
+                  <option value="" disabled>Izvēlieties kategoriju</option>
+                  {uniqueCategories.map((cat, index) => (
+                    <option key={index} value={cat}>{cat}</option>
+                  ))}
+                  <option value="NEW_CATEGORY">Pievienot jaunu kategoriju</option>
+                </select>
+              ) : (
+                <div style={{ display: 'flex', gap: '10px' }}>
+                  <input 
+                    type="text" 
+                    placeholder="Ievadiet jauno kategoriju" 
+                    className="admin-input" 
+                    style={{ flex: 1 }}
+                    value={newProduct.category}
+                    onChange={e => setNewProduct({...newProduct, category: e.target.value})} 
+                    required 
+                    autoFocus
+                  />
+                  <button 
+                    type="button" 
+                    className="admin-delete-button"
+                    style={{ padding: '0 15px' }}
+                    onClick={() => {
+                      setIsNewCategory(false);
+                      setNewProduct({...newProduct, category: ''});
+                    }}
+                  >
+                    Atcelt
+                  </button>
+                </div>
+              )}
             </div>
 
-            <div style={styles.inputGroup}>
-              <label>Attēla ceļš</label>
-              <input type="text" placeholder="/storage/images/..." style={styles.input} onChange={e => setNewProduct({...newProduct, image: e.target.value})} required />
+            <div className="admin-input-group">
+              <label>Izvēlēties attēlu</label>
+              <input type="file" accept="image/*" className="admin-input" onChange={e => setFile(e.target.files[0])} required />
             </div>
 
-            <div style={styles.inputGroup}>
+            <div className="admin-input-group">
               <label>Apraksts</label>
-              <textarea style={{...styles.input, minHeight: '80px'}} onChange={e => setNewProduct({...newProduct, description: e.target.value})} required />
+              <textarea value={newProduct.description} className="admin-input admin-textarea" onChange={e => setNewProduct({...newProduct, description: e.target.value})} required />
             </div>
 
-            <button type="submit" style={styles.submitButton}>Pievienot Produktu</button>
+            <button type="submit" className="admin-submit-button">Pievienot Produktu</button>
           </form>
         </section>
 
-        {/* TABULA */}
-        <section style={styles.card}>
-          <h3 style={styles.cardTitle}>Esošie produkti ({products.length})</h3>
-          <div style={styles.tableWrapper}>
-            <table style={styles.table}>
+        <section className="admin-card">
+          <h3 className="admin-card-title">Esošie produkti ({products.length})</h3>
+          <div className="admin-table-wrapper">
+            <table className="admin-table">
               <thead>
                 <tr>
-                  <th style={styles.th}>ID</th>
-                  <th style={styles.th}>Prece</th>
-                  <th style={styles.th}>Cena</th>
-                  <th style={styles.th}>Darbības</th>
+                  <th className="admin-th">ID</th>
+                  <th className="admin-th">Prece</th>
+                  <th className="admin-th">Cena</th>
+                  <th className="admin-th">Darbības</th>
                 </tr>
               </thead>
               <tbody>
                 {products.map(product => (
-                  <tr key={product.id} style={styles.tr}>
-                    <td style={styles.td}>{product.id}</td>
-                    <td style={styles.td}><strong>{product.title}</strong></td>
-                    <td style={styles.td}>{Number(product.price).toFixed(2)} €</td>
-                    <td style={styles.td}>
-                      <button onClick={() => handleDelete(product.id)} style={styles.deleteButton}>Dzēst</button>
+                  <tr key={product.id} className="admin-tr">
+                    <td className="admin-td">{product.id}</td>
+                    <td className="admin-td"><strong>{product.title}</strong></td>
+                    <td className="admin-td">{Number(product.price).toFixed(2)} €</td>
+                    <td className="admin-td">
+                      <button onClick={() => handleDelete(product.id)} className="admin-delete-button">Dzēst</button>
                     </td>
                   </tr>
                 ))}
@@ -110,99 +171,3 @@ export default function AdminPanel({ products, setProducts }) {
     </div>
   );
 }
-
-// Inline stili labākam UI
-const styles = {
-  container: {
-    maxWidth: '1200px',
-    margin: '0 auto',
-    padding: '40px 20px',
-    fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
-    backgroundColor: '#f9f9f9',
-    minHeight: '100vh'
-  },
-  header: {
-    marginBottom: '30px',
-    borderBottom: '2px solid #eee',
-    paddingBottom: '10px'
-  },
-  contentGrid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
-    gap: '30px',
-    alignItems: 'start'
-  },
-  card: {
-    backgroundColor: '#fff',
-    padding: '25px',
-    borderRadius: '12px',
-    boxShadow: '0 4px 6px rgba(0,0,0,0.05)',
-    border: '1px solid #eee'
-  },
-  cardTitle: {
-    marginTop: 0,
-    marginBottom: '20px',
-    fontSize: '1.2rem',
-    color: '#333'
-  },
-  form: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '15px'
-  },
-  inputGroup: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '5px'
-  },
-  input: {
-    padding: '10px',
-    borderRadius: '6px',
-    border: '1px solid #ddd',
-    fontSize: '14px'
-  },
-  submitButton: {
-    backgroundColor: '#2ecc71',
-    color: 'white',
-    padding: '12px',
-    border: 'none',
-    borderRadius: '6px',
-    cursor: 'pointer',
-    fontSize: '16px',
-    fontWeight: 'bold',
-    marginTop: '10px',
-    transition: 'background 0.3s'
-  },
-  tableWrapper: {
-    overflowX: 'auto'
-  },
-  table: {
-    width: '100%',
-    borderCollapse: 'collapse',
-    textAlign: 'left'
-  },
-  th: {
-    padding: '12px',
-    borderBottom: '2px solid #eee',
-    color: '#666',
-    fontSize: '14px'
-  },
-  td: {
-    padding: '12px',
-    borderBottom: '1px solid #eee',
-    fontSize: '14px'
-  },
-  tr: {
-    transition: 'background 0.2s',
-    '&:hover': { backgroundColor: '#fdfdfd' }
-  },
-  deleteButton: {
-    backgroundColor: '#e74c3c',
-    color: 'white',
-    padding: '6px 12px',
-    border: 'none',
-    borderRadius: '4px',
-    cursor: 'pointer',
-    fontSize: '12px'
-  }
-};

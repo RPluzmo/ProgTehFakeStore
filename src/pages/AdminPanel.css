@@ -1,0 +1,127 @@
+.admin-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    color: white;
+  }
+  
+  .admin-header {
+    margin-bottom: 30px;
+    text-align: center;
+  }
+  
+  .admin-content-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 30px;
+    align-items: start;
+  }
+  
+  .admin-card {
+    background-color: #ffffff;
+    color: #000000;
+    padding: 25px;
+    border-radius: 10px;
+    border: 5px solid #000000;
+  }
+  
+  .admin-card-title {
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+    color: #000000;
+    font-weight: bold;
+  }
+  
+  .admin-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .admin-input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    font-weight: bold;
+  }
+  
+  .admin-input {
+    padding: 10px 14px;
+    border-radius: 10px;
+    border: 2px solid #000000;
+    font-size: 14px;
+    outline: none;
+  }
+  
+  .admin-input:focus {
+    border-color: #1f338a;
+  }
+  
+  .admin-textarea {
+    min-height: 80px;
+    resize: vertical;
+    font-family: inherit;
+  }
+  
+  .admin-submit-button {
+    background-color: rgb(238, 13, 88);
+    color: white;
+    padding: 12px;
+    border: 3px solid #000000;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    margin-top: 10px;
+    transition: transform 0.2s, background-color 0.2s;
+  }
+  
+  .admin-submit-button:hover {
+    background-color: #c40a48;
+    transform: scale(1.02);
+  }
+  
+  .admin-table-wrapper {
+    overflow-x: auto;
+  }
+  
+  .admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+  }
+  
+  .admin-th {
+    padding: 12px;
+    border-bottom: 3px solid #000000;
+    color: #000000;
+    font-size: 14px;
+    font-weight: bold;
+  }
+  
+  .admin-td {
+    padding: 12px;
+    border-bottom: 1px solid #ccc;
+    font-size: 14px;
+  }
+  
+  .admin-tr:hover {
+    background-color: #f1f1f1;
+  }
+  
+  .admin-delete-button {
+    background-color: #1f338a;
+    color: white;
+    padding: 8px 12px;
+    border: 2px solid #000000;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: bold;
+    transition: background 0.3s;
+  }
+  
+  .admin-delete-button:hover {
+    background-color: #0d1b54;
+  }
